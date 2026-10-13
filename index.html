@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>MACRO'S Piano di Lancio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600&display=swap">
+<style>
+/* Stile della landing v2: notte grafite continua, Poppins + Inter, filetti da 1px, pillole, telefono con schermate vere,
+   piatti scontornati. Layout: barra in alto, palco a due colonne per ogni fase, navigazione a mano in basso. */
+:root {
+  --bg: #141519;
+  --raise: #1B1D22;
+  --raise-2: #23262C;
+  --line: rgba(255,255,255,.08);
+  --line-2: rgba(255,255,255,.14);
+  --text: #F2F3F5;
+  --text-2: #A3A6AF;
+  --text-3: #8C8F99;
+  --mint: #22D287;
+  --brand: linear-gradient(100deg, #08F13C 0%, #22D287 50%, #3CBDD2 100%);
+  --on-brand: #08140D;
+  --cyan: #3CBDD2;
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 17px/1.6 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+::selection { background: rgba(34,210,135,.32); color: #fff; }
+h1, h2, h3 { font-family: 'Poppins', sans-serif; font-weight: 600; margin: 0; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+img { display: block; max-width: 100%; height: auto; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 6px; }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 24px; }
+
+/* Barra */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(20,21,25,.72); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); }
+.nav .wrap { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nav-l { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.nav-l img { height: 32px; width: auto; }
+.nav-l span { font-size: 14px; color: var(--text-2); white-space: nowrap; }
+.cap { display: inline-flex; align-items: baseline; gap: 10px; padding: 9px 16px; border-radius: 999px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line-2); font-size: 13px; color: var(--text-2); white-space: nowrap; }
+.cap strong { font: 600 16px/1 'Poppins', sans-serif; color: var(--text); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+
+/* Palco della fase */
+main { padding-block: 40px 28px; }
+.scene { display: none; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 56px; align-items: center; min-height: 600px; }
+.scene.on { display: grid; }
+.copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.tag { align-self: flex-start; display: inline-flex; gap: 8px; padding: 7px 14px; border-radius: 999px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line-2); font-size: 13px; font-weight: 600; }
+.tag span { color: var(--text-3); font-weight: 500; }
+.copy h1 { font-size: clamp(34px, 4.4vw, 56px); line-height: 1.06; letter-spacing: -.03em; }
+.copy p { font-size: clamp(17px, 1.4vw, 19px); line-height: 1.55; color: var(--text-2); max-width: 36em; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 6px; }
+.stat { padding: 18px 20px; border-radius: 20px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); }
+.stat strong { display: block; font: 600 28px/1.05 'Poppins', sans-serif; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.stat strong.m { color: var(--mint); }
+.stat strong.tbd { font-size: 19px; letter-spacing: -.01em; color: var(--text-2); }
+.city .n { display: none; }
+.city { grid-template-columns: 62px 1fr; }
+.stat span { display: block; margin-top: 6px; font-size: 13px; color: var(--text-2); line-height: 1.45; }
+
+.vis { position: relative; height: 600px; min-width: 0; }
+.vis::after { content: ""; position: absolute; left: 50%; bottom: 8px; width: 360px; height: 50px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(0,0,0,.6), transparent); filter: blur(6px); pointer-events: none; }
+
+/* Telefono con schermata vera */
+.device { --pw: 240px; position: absolute; left: calc(50% - var(--pw) - 28px); top: 10px; z-index: 3; width: var(--pw); aspect-ratio: 356/740; padding: calc(var(--pw)*.0337); border-radius: calc(var(--pw)*.163); background: linear-gradient(145deg, #3A3D44, #16171B 38%, #0E0F12 62%, #2E3137); box-shadow: inset 0 0 0 1px rgba(255,255,255,.16), inset 0 0 0 3px #0B0C0E, 0 60px 100px -40px rgba(0,0,0,.95), 0 30px 60px -30px rgba(0,0,0,.7); }
+.device::before { content: ""; position: absolute; right: calc(var(--pw)*-.008); top: 24%; width: 3px; height: 11%; border-radius: 2px; background: #2A2C31; }
+.screen { position: relative; width: 100%; height: 100%; border-radius: calc(var(--pw)*.132); overflow: hidden; background: #F6F7FA; }
+.screen > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.screen::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(120deg, rgba(255,255,255,.18), transparent 35%); mix-blend-mode: screen; pointer-events: none; }
+
+/* Piatti scontornati */
+.dish { position: absolute; z-index: 2; pointer-events: none; }
+.dish img { width: 100%; filter: drop-shadow(0 30px 30px rgba(0,0,0,.55)); }
+
+/* Riquadri di vetro */
+.chip { position: absolute; z-index: 4; padding: 16px 18px; border-radius: 20px; background: rgba(29,31,37,.8); -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3); box-shadow: inset 0 0 0 1px var(--line-2), 0 24px 50px -24px rgba(0,0,0,.9); }
+.chip h3 { font-size: 15px; margin-bottom: 10px; letter-spacing: -.01em; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: 14px; }
+.checks li { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center; }
+.checks i { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line-2); display: grid; place-items: center; transition: background-color .4s var(--ease-out), box-shadow .4s ease; }
+.checks i svg { width: 11px; height: 11px; opacity: 0; transform: scale(.6); transition: opacity .3s ease, transform .4s var(--ease-out); }
+.checks li.done i { background: var(--mint); box-shadow: none; }
+.checks li.done i svg { opacity: 1; transform: none; }
+.checks small { font-size: 12px; color: var(--text-3); }
+.checks li.done small { color: var(--mint); }
+
+.notif { display: flex; align-items: center; gap: 12px; padding: 12px 16px 12px 12px; }
+.notif img { width: 40px; height: 40px; border-radius: 10px; }
+.notif strong { display: block; font-size: 14px; font-weight: 600; line-height: 1.3; }
+.notif span { display: block; font-size: 13px; color: var(--text-2); line-height: 1.35; }
+
+/* Early Access: storia + iscritti */
+.story { position: absolute; z-index: 3; left: calc(50% - min(230px, 44%) - 28px); top: 20px; width: min(230px, 44%); aspect-ratio: 9/16; border-radius: 26px; overflow: hidden; background: #000; box-shadow: inset 0 0 0 1px var(--line-2), 0 60px 100px -40px rgba(0,0,0,.95); }
+.story img { width: 100%; height: 100%; object-fit: cover; }
+.story .bars { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; gap: 4px; }
+.story .bars i { flex: 1; height: 3px; border-radius: 3px; background: rgba(255,255,255,.35); overflow: hidden; }
+.story .bars i::after { content: ""; display: block; height: 100%; width: 0; background: #fff; }
+.story.go .bars i:nth-child(1)::after { animation: fill 3s linear forwards; }
+.story.go .bars i:nth-child(2)::after { animation: fill 3s linear 3s forwards; }
+.story.go .bars i:nth-child(3)::after { animation: fill 3s linear 6s forwards; }
+@keyframes fill { to { width: 100%; } }
+.story .who { position: absolute; top: 24px; left: 14px; font-size: 12px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+.story .cap-s { position: absolute; left: 12px; right: 12px; bottom: 14px; display: grid; gap: 8px; }
+.story .cap-s p { background: rgba(20,21,25,.78); color: #fff; font: 600 14px/1.3 'Poppins', sans-serif; border-radius: 12px; padding: 9px 11px; }
+.story .cap-s span { background: #fff; color: #111; font-size: 12px; font-weight: 600; text-align: center; border-radius: 999px; padding: 7px; }
+.subs { left: calc(50% + 28px); top: 60px; width: min(260px, calc(50% - 28px)); }
+.subs .big { font: 600 44px/1 'Poppins', sans-serif; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.subs .lbl { font-size: 13px; color: var(--text-2); margin: 4px 0 14px; }
+.city { display: grid; grid-template-columns: 62px 1fr 44px; gap: 10px; align-items: center; font-size: 13px; margin-top: 8px; }
+.city .tr { height: 6px; border-radius: 9px; background: var(--raise-2); overflow: hidden; }
+.city .tr b { display: block; height: 100%; width: 100%; border-radius: inherit; background: #4A4E57; transform-origin: 0 50%; transform: scaleX(0); transition: transform 5.5s var(--ease-out); }
+.city.win .tr b { background: var(--mint); }
+.city.win .nm { color: var(--mint); font-weight: 600; }
+.city .n { text-align: right; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.pops { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 5; }
+.pop { position: absolute; font-size: 12px; font-weight: 600; padding: 6px 11px; border-radius: 999px; background: rgba(20,21,25,.86); box-shadow: inset 0 0 0 1px var(--line-2); white-space: nowrap; animation: floatup 2.6s var(--ease-out) forwards; }
+.pop em { font-style: normal; color: var(--mint); }
+@keyframes floatup { 0% { transform: translateY(8px); opacity: 0; } 15% { opacity: 1; transform: none; } 100% { transform: translateY(-110px); opacity: 0; } }
+
+/* Ghost kitchen: mappa + ordini */
+.map { position: absolute; z-index: 1; left: 0; right: 0; top: 0; height: 360px; border-radius: 28px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.map svg { width: 100%; height: 100%; display: block; }
+.orders { left: 0; right: 0; margin-inline: auto; bottom: 96px; width: min(440px, 100%); }
+.motion-ok .scene.on .orders { animation: none; }
+.orders svg { width: 100%; height: auto; display: block; }
+.gk-phone { --pw: 200px; left: auto; right: 2%; margin-left: 0; top: 150px; }
+.zero { right: 0; top: 102px; z-index: 5; }
+.zero strong { font: 600 22px/1 'Poppins', sans-serif; letter-spacing: -.02em; color: var(--mint); }
+.zero span { display: block; font-size: 13px; color: var(--text-2); margin-top: 4px; }
+
+/* Ristorante */
+.store { position: absolute; inset: 20px 0 60px; z-index: 1; }
+.store svg { width: 100%; height: 100%; display: block; }
+.draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.motion-ok .scene.on .draw { animation: draw 1.6s var(--ease-out) both; }
+@keyframes draw { from { stroke-dashoffset: 1; } }
+.awn { transform-box: fill-box; transform-origin: top; }
+.motion-ok .scene.on .awn { animation: awn .7s var(--ease-out) 1.1s both; }
+@keyframes awn { from { transform: scaleY(0); } }
+
+/* Replica */
+.net { position: absolute; inset: 0 0 10px; z-index: 1; border-radius: 28px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.net svg { width: 100%; height: 100%; display: block; }
+.net .lk { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.2s var(--ease-out); }
+.net .lk.on { stroke-dashoffset: 0; }
+.net .node { opacity: .4; transition: opacity .5s ease; }
+.net .node.on { opacity: 1; }
+.legend { position: absolute; z-index: 3; top: 16px; right: 16px; display: grid; gap: 7px; padding: 12px 14px; border-radius: 16px; background: rgba(20,21,25,.86); box-shadow: inset 0 0 0 1px var(--line-2); font-size: 12px; color: var(--text-2); }
+.legend div { display: flex; align-items: center; gap: 8px; }
+.legend i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+
+/* Gate */
+.gate { position: absolute; z-index: 6; left: 50%; bottom: 0; width: min(440px, 100%); transform: translateX(-50%); display: flex; gap: 14px; align-items: center; padding: 14px 18px 14px 14px; border-radius: 20px; background: rgba(29,31,37,.88); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: inset 0 0 0 1px rgba(34,210,135,.45), 0 24px 50px -24px rgba(0,0,0,.9); }
+.gate .seal { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--brand); display: grid; place-items: center; }
+.gate .seal svg { width: 18px; height: 18px; }
+.gate strong { display: block; font: 600 15px/1.3 'Poppins', sans-serif; }
+.gate span { display: block; font-size: 13px; color: var(--text-2); line-height: 1.4; }
+
+/* Comandi */
+.controls { display: flex; flex-direction: column; gap: 16px; padding-block: 8px 40px; }
+.seg { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); }
+.seg-pill { position: absolute; top: 4px; bottom: 4px; left: 4px; border-radius: 999px; background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line-2); transition: transform .45s var(--ease-out), width .45s var(--ease-out); }
+.seg button { position: relative; z-index: 1; min-height: 46px; padding: 0 10px; border-radius: 999px; color: var(--text-2); font-size: 14px; font-weight: 500; line-height: 1.2; transition: color .2s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seg button[aria-current="step"] { color: var(--text); }
+.seg button small { display: block; font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; }
+.btns { display: flex; gap: 10px; }
+.btn { position: relative; overflow: hidden; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 28px; border-radius: 999px; font: 600 16px/1 'Inter', sans-serif; white-space: nowrap; transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out), background-color .2s ease; }
+.btn svg { width: 18px; height: 18px; }
+.btn:active { transform: scale(.97); transition-duration: .08s; }
+.btn-brand { background: var(--brand); color: var(--on-brand); box-shadow: 0 10px 24px -12px rgba(0,0,0,.7); min-width: 170px; }
+.btn-brand::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%); transform: translateX(-120%); transition: transform .8s var(--ease-out); }
+.btn-quiet { background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line); }
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover { transform: translateY(-2px); }
+  .btn-brand:hover { box-shadow: 0 18px 32px -12px rgba(0,0,0,.8); }
+  .btn-brand:hover::after { transform: translateX(120%); }
+  .btn-quiet:hover { background: #2A2D34; }
+  .seg button:hover { color: var(--text); }
+}
+.btn:disabled { opacity: .4; pointer-events: none; }
+.note { font-size: 13px; color: var(--text-3); max-width: 62ch; }
+.keys { font-size: 13px; color: var(--text-3); }
+.keys kbd { font: 600 12px/1 'Inter', sans-serif; color: var(--text); padding: 3px 8px; border-radius: 8px; background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line-2); }
+
+/* Entrata della fase: solo con movimento ammesso */
+.motion-ok .scene.on .copy > * { animation: rise .9s var(--ease-out) both; }
+.motion-ok .scene.on .copy > *:nth-child(2) { animation-delay: .08s; }
+.motion-ok .scene.on .copy > *:nth-child(3) { animation-delay: .16s; }
+.motion-ok .scene.on .copy > *:nth-child(4) { animation-delay: .24s; }
+.motion-ok .scene.on .device, .motion-ok .scene.on .story { animation: arrive 1s var(--ease-out) .1s both; }
+.motion-ok .scene.on .dish { animation: dropin 1.1s var(--ease-out) both; }
+.motion-ok .scene.on .dish:nth-of-type(2) { animation-delay: .12s; }
+.motion-ok .scene.on .dish img { animation: float 10s ease-in-out infinite; }
+.motion-ok .scene.on .chip:not(.gate) { animation: rise .9s var(--ease-out) .35s both; }
+.motion-ok .gate { transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+.motion-ok .gate:not(.show) { opacity: 0; transform: translate(-50%, 16px); }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes arrive { from { opacity: 0; transform: translateY(40px) rotate(-4deg); } to { opacity: 1; transform: none; } }
+@keyframes dropin { from { opacity: 0; transform: translateY(-40px) rotate(-14deg) scale(.92); } to { opacity: 1; transform: none; } }
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(3deg); } }
+
+@media (max-width: 1000px) {
+  .scene { grid-template-columns: 1fr; gap: 28px; min-height: 0; }
+  .vis { height: 560px; }
+}
+@media (max-width: 760px) {
+  .wrap { padding-inline: 20px; }
+  .nav-l span { display: none; }
+  main { padding-block: 24px 16px; }
+  .vis { height: 520px; }
+  .device { --pw: 220px; }
+  .gk-phone { --pw: 160px; top: 180px; }
+  .subs { top: 40px; }
+  .subs .big { font-size: 34px; }
+  .orders { width: 260px; }
+  .seg { grid-template-columns: repeat(5, minmax(56px, 1fr)); }
+  .seg button { font-size: 13px; padding: 0 4px; }
+  .seg button small { display: none; }
+  .btn { min-height: 50px; padding: 0 20px; }
+  .btn-brand { min-width: 0; flex: 1; }
+  .btns { width: 100%; }
+  .keys { display: none; }
+}
+@media (max-width: 420px) {
+  .cap span { display: none; }
+  .dish { display: none; }
+  .chip-prep { left: 0 !important; right: 0 !important; width: auto !important; top: 340px !important; }
+}
+</style>
+
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <div class="nav-l"><img src="logo-mark.webp" alt="MACRO'S" width="48" height="32"><span>Piano di lancio a capitale minimo</span></div>
+    <div class="cap"><span>Capitale a rischio</span><strong>stime da verificare</strong></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Fase 0 -->
+  <section class="scene on" data-scene="0" aria-label="Fase 0, Preparazione">
+    <div class="copy">
+      <div class="tag">Fase 0 · Preparazione <span>2–4 settimane</span></div>
+      <h1>Il prodotto è già pronto. Manca solo la porta d'ingresso.</h1>
+      <p>Landing page, app e simulazione dell'ordine tramite totem esistono già. Steven Basalari entra come socio, si deposita il marchio e si pubblica la Early Access.</p>
+      <div class="stats">
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>costo della fase</span></div>
+        <div class="stat"><strong>3 su 6</strong><span>passi già pronti</span></div>
+      </div>
+    </div>
+    <div class="vis">
+      <div class="device"><div class="screen"><img src="early-access.webp" alt="Pagina MACRO'S Early Access con il modulo di iscrizione"></div></div>
+      <div class="chip chip-prep" style="left:calc(50% + 28px);top:120px;width:min(250px, calc(50% - 28px))">
+        <h3>Pronto per partire</h3>
+        <ul class="checks" id="checks">
+          <li class="done"><i><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Landing page<small>pronta</small></li>
+          <li class="done"><i><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>App e account<small>pronta</small></li>
+          <li class="done"><i><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Ordine dal totem<small>simulato</small></li>
+          <li data-later><i><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Steven Basalari socio<small>settimana 1</small></li>
+          <li data-later><i><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Marchio depositato<small>settimana 2</small></li>
+          <li data-later><i><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Early Access online<small>settimana 3</small></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fase 1 -->
+  <section class="scene" data-scene="1" aria-label="Fase 1, Early Access">
+    <div class="copy">
+      <div class="tag">Fase 1 · Annuncio + Early Access <span>6–8 settimane</span></div>
+      <h1>Steven Basalari lo annuncia. L'Italia vota la città.</h1>
+      <p>Steven Basalari annuncia il progetto in tutta Italia tramite i suoi canali social. Con la Early Access si verificano la prima traction e la prima città dove aprire.</p>
+      <div class="stats">
+        <div class="stat"><strong class="tbd">Instagram e TikTok</strong><span>canali di Steven Basalari</span></div>
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>iscritti alla Early Access</span></div>
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>iscritti nella prima città</span></div>
+      </div>
+    </div>
+    <div class="vis">
+      <div class="story" id="story">
+        <img src="basalari.webp" alt="Steven Basalari">
+        <div class="bars"><i></i><i></i><i></i></div>
+        <div class="who">stevenbasalari</div>
+        <div class="cap-s"><p>Sto per aprire un ristorante dove decidi tu i macro.</p><span>MACRO'S Early Access</span></div>
+      </div>
+      <div class="chip subs">
+        <div class="big" id="subs" style="font-size:22px">Iscritti per città</div>
+        <div class="lbl">la classifica decide dove aprire</div>
+        <div id="cities"></div>
+      </div>
+      <div class="pops" id="pops"></div>
+      <div class="chip gate" data-gate>
+        <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div><strong>Gate 1 superato · Milano vince</strong><span>La città con più iscritti confermati ottiene la ghost kitchen.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fase 2 -->
+  <section class="scene" data-scene="2" aria-label="Fase 2, Ghost Kitchen">
+    <div class="copy">
+      <div class="tag">Fase 2 · Ghost Kitchen Milano <span>6 mesi</span></div>
+      <h1>Sei mesi di delivery dicono se i clienti tornano.</h1>
+      <p>Per un'ulteriore validazione e per mettere a rischio meno capitale nella fase di lancio, si apre una ghost kitchen nella città che ha avuto più voti (verosimilmente Milano). Solo delivery o ritiro, con ordini dall'app proprietaria: niente commissioni a Glovo, Deliveroo e Just Eat.</p>
+      <div class="stats">
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>ordini al giorno per il pareggio</span></div>
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>ordini al giorno al mese 6</span></div>
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>margine per ordine</span></div>
+      </div>
+    </div>
+    <div class="vis">
+      <div class="map"><svg id="gkmap" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice" aria-label="Consegne dalla ghost kitchen nei quartieri di Milano"></svg></div>
+      <div class="chip orders"><svg id="gkchart" viewBox="0 0 400 140" aria-label="Andamento indicativo degli ordini al giorno rispetto al pareggio"></svg></div>
+      <div class="chip gate" data-gate>
+        <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div><strong>Gate 2 superato</strong><span>Ordini stabili sopra il pareggio e clienti che riordinano. Si firma il locale.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fase 3 -->
+  <section class="scene" data-scene="3" aria-label="Fase 3, Primo ristorante">
+    <div class="copy">
+      <div class="tag">Fase 3 · Primo ristorante <span>4–6 mesi di cantiere</span></div>
+      <h1>Il primo MACRO'S apre dove arrivavano più ordini.</h1>
+      <p>Se il progetto viene validato e consolidato, si apre il primo ristorante con coperti, totem e addetti al servizio al tavolo.</p>
+      <div class="stats">
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>ordini al giorno a regime</span></div>
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>ordini al giorno per il pareggio</span></div>
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>EBITDA al mese</span></div>
+      </div>
+    </div>
+    <div class="vis">
+      <div class="store">
+        <svg id="store" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet" aria-label="Il primo ristorante MACRO'S">
+          <line x1="0" y1="262" x2="400" y2="262" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
+          <path class="draw" pathLength="1" d="M60 262 V90 H340 V262" fill="none" stroke="#A3A6AF" stroke-width="2"/>
+          <path class="draw" pathLength="1" d="M48 90 H352 V76 H48 Z" fill="none" stroke="#A3A6AF" stroke-width="2"/>
+          <rect x="120" y="100" width="160" height="34" rx="17" fill="#1B1D22" stroke="rgba(255,255,255,.14)"/>
+          <text x="200" y="123" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="600" font-size="17" fill="#F2F3F5" letter-spacing="-.3">macro<tspan fill="#22D287">'</tspan>s</text>
+          <g class="awn"><rect x="60" y="140" width="280" height="14" fill="#22D287"/><rect x="88" y="140" width="28" height="14" fill="#141519"/><rect x="144" y="140" width="28" height="14" fill="#141519"/><rect x="200" y="140" width="28" height="14" fill="#141519"/><rect x="256" y="140" width="28" height="14" fill="#141519"/><rect x="312" y="140" width="28" height="14" fill="#141519"/></g>
+          <path class="draw" pathLength="1" d="M78 160 H230 V250 H78 Z" fill="none" stroke="#A3A6AF" stroke-width="1.5"/>
+          <path class="draw" pathLength="1" d="M252 160 H322 V262 H252 Z" fill="none" stroke="#A3A6AF" stroke-width="1.5"/>
+          <rect x="80" y="162" width="148" height="86" fill="rgba(34,210,135,.08)"/>
+          <rect x="100" y="190" width="18" height="50" rx="4" fill="#23262C" stroke="#22D287" stroke-width="1.2"/>
+          <rect x="103" y="194" width="12" height="17" rx="2" fill="#22D287"/>
+          <rect x="130" y="190" width="18" height="50" rx="4" fill="#23262C" stroke="#22D287" stroke-width="1.2"/>
+          <rect x="133" y="194" width="12" height="17" rx="2" fill="#22D287"/>
+          <rect x="160" y="190" width="18" height="50" rx="4" fill="#23262C" stroke="#22D287" stroke-width="1.2"/>
+          <rect x="163" y="194" width="12" height="17" rx="2" fill="#22D287"/>
+          <text x="196" y="178" font-family="Inter, sans-serif" font-size="9" fill="#8C8F99">3 totem</text>
+          <circle cx="310" cy="214" r="3" fill="#22D287"/>
+          <g id="walkers"></g>
+        </svg>
+      </div>
+      <div class="chip gate" data-gate>
+        <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="#08140D" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div><strong>Gate 3 superato</strong><span>Il ristorante resta sopra il pareggio con il food cost sotto controllo. Si replica.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fase 4 -->
+  <section class="scene" data-scene="4" aria-label="Fase 4, Replica">
+    <div class="copy">
+      <div class="tag">Fase 4 · Replica <span>finanziata dalla cassa</span></div>
+      <h1>Stesso ciclo, città dopo città.</h1>
+      <p>Secondo store a Milano quando il primo regge. Ghost kitchen nella città successiva della classifica Early Access, poi il suo ristorante.</p>
+      <div class="stats">
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>per testare una nuova città</span></div>
+        <div class="stat"><strong class="tbd">Stima da verificare</strong><span>risparmio sui nuovi store</span></div>
+      </div>
+    </div>
+    <div class="vis">
+      <div class="net"><svg id="net" viewBox="0 0 440 440" preserveAspectRatio="xMidYMid meet" aria-label="Espansione di MACRO'S nelle città italiane"></svg></div>
+      <div class="legend">
+        <div><i style="background:#22D287"></i>Ristorante</div>
+        <div><i style="box-shadow:inset 0 0 0 2px #22D287"></i>Ghost kitchen</div>
+        <div><i style="background:#4A4E57"></i>Early Access aperta</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="wrap controls">
+  <nav class="seg" id="seg" aria-label="Fasi del piano"><span class="seg-pill" id="pill"></span></nav>
+  <div class="row">
+    <div class="btns">
+      <button class="btn btn-quiet" id="prev" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>Indietro</button>
+      <button class="btn btn-brand" id="next" type="button">Avanti<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+    <span class="keys">Puoi usare anche <kbd>←</kbd> <kbd>→</kbd></span>
+  </div>
+  <p class="note">Tutte le cifre sono stime da verificare con preventivi e dati reali. Le animazioni di iscritti, ordini e città sono solo illustrative.</p>
+</div>
+
+<script>
+(() => {
+  const PHASES = [
+    { name: 'Preparazione', sub: '4.000 €', capital: 4000 },
+    { name: 'Early Access', sub: '5.600 €', capital: 9600 },
+    { name: 'Ghost Kitchen', sub: '70.550 €', capital: 80150 },
+    { name: 'Ristorante', sub: '392.400 €', capital: 472550 },
+    { name: 'Replica', sub: 'dalla cassa', capital: 896260 }
+  ];
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) document.documentElement.classList.add('motion-ok');
+  const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const NS = 'http://www.w3.org/2000/svg';
+  const svgEl = (tag, attrs, parent, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; if (parent) parent.appendChild(e); return e; };
+
+  let token = 0;
+  const handles = [];
+  const later = (fn, ms) => { const t = token; handles.push(setTimeout(() => t === token && fn(), reduce ? 0 : ms)); };
+  const every = (fn, ms) => { if (reduce) return; const t = token; const h = setInterval(() => t === token ? fn() : clearInterval(h), ms); handles.push(h); };
+  const frame = fn => { const t = token; const loop = ts => { if (t !== token) return; if (fn(ts) !== false) requestAnimationFrame(loop); }; requestAnimationFrame(loop); };
+  const clearAll = () => { token++; handles.splice(0).forEach(h => { clearTimeout(h); clearInterval(h); }); };
+  function countTo(el, to, dur = 2000, suffix = '', from = 0) {
+    if (reduce) { el.textContent = fmt(to) + suffix; return; }
+    const start = performance.now();
+    frame(ts => { const p = Math.min(1, (ts - start) / dur); const e = 1 - Math.pow(1 - p, 3); el.textContent = fmt(from + (to - from) * e) + suffix; return p < 1; });
+  }
+  let capitalNow = 4000;
+  const setCapital = v => { const from = capitalNow; capitalNow = v; countTo($('#capital'), v, 1200, ' €', from); };
+
+  const scenes = [];
+  // 0 · Preparazione
+  scenes[0] = () => {
+    const items = $$('#checks li[data-later]');
+    items.forEach(li => li.classList.remove('done'));
+    items.forEach((li, i) => later(() => li.classList.add('done'), 1200 + i * 1100));
+  };
+
+  // 1 · Early Access
+  const CITIES = [['Milano', 1400], ['Roma', 720], ['Torino', 480], ['Brescia', 410], ['Bologna', 350], ['Napoli', 140]];
+  CITIES.forEach(([n]) => { const d = document.createElement('div'); d.className = 'city'; d.innerHTML = `<span class="nm">${n}</span><span class="tr"><b></b></span><span class="n">0</span>`; $('#cities').appendChild(d); });
+  scenes[1] = vis => {
+    const story = $('#story'); story.classList.remove('go'); void story.offsetWidth; story.classList.add('go');
+    const rows = $$('#cities .city');
+    rows.forEach(r => { r.classList.remove('win'); const b = r.querySelector('b'); b.style.transition = 'none'; b.style.transform = 'scaleX(0)'; r.querySelector('.n').textContent = '0'; });
+    later(() => {
+      rows.forEach((r, i) => { const v = CITIES[i][1]; const b = r.querySelector('b'); b.style.transition = ''; b.style.transform = `scaleX(${v / 1400})`; countTo(r.querySelector('.n'), v, 5500); });
+    }, 500);
+    later(() => rows[0].classList.add('win'), 6000);
+    const pops = $('#pops'); pops.innerHTML = '';
+    const names = ['Milano', 'Milano', 'Roma', 'Milano', 'Torino', 'Brescia', 'Milano', 'Bologna'];
+    let k = 0;
+    every(() => {
+      if (pops.childElementCount > 8) pops.firstElementChild.remove();
+      const p = document.createElement('div'); p.className = 'pop';
+      p.innerHTML = `<em>+1 iscritto</em> · ${names[k % names.length]}`;
+      p.style.left = (36 + Math.random() * 18) + '%';
+      p.style.top = (55 + Math.random() * 20) + '%';
+      pops.appendChild(p); k++;
+    }, 480);
+    later(() => vis.closest('.scene').querySelectorAll('[data-count]').forEach(el => countTo(el, +el.dataset.count, 2200)), 5800);
+  };
+
+  // 2 · Ghost kitchen
+  const map = $('#gkmap');
+  (() => {
+    const g = svgEl('g', { transform: 'rotate(-12 200 115)', stroke: 'rgba(255,255,255,.06)', 'stroke-width': 1.2 }, map);
+    for (let x = -80; x <= 480; x += 32) svgEl('line', { x1: x, y1: -60, x2: x, y2: 290 }, g);
+    for (let y = -60; y <= 290; y += 28) svgEl('line', { x1: -80, y1: y, x2: 480, y2: y }, g);
+    svgEl('circle', { cx: 150, cy: 100, r: 70, fill: 'none', stroke: 'rgba(255,255,255,.14)', 'stroke-dasharray': '3 5' }, map);
+    svgEl('text', { x: 150, y: 184, 'text-anchor': 'middle', 'font-size': 10, fill: '#8C8F99', 'font-family': 'Inter, sans-serif' }, map, 'raggio 2 km');
+    svgEl('g', { id: 'gkfx' }, map);
+    svgEl('circle', { cx: 150, cy: 100, r: 14, fill: '#22D287' }, map);
+    svgEl('text', { x: 150, y: 104, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#08140D', 'font-family': 'Inter, sans-serif' }, map, 'GK');
+    svgEl('text', { x: 70, y: 24, 'text-anchor': 'start', 'font-size': 11, 'font-weight': 600, fill: '#A3A6AF', 'font-family': 'Inter, sans-serif' }, map, 'Milano · consegne (simulazione)');
+  })();
+  const chart = $('#gkchart');
+  const ORDERS = [35, 50, 65, 80, 90, 100];
+  (() => {
+    const L = 34, R = 392, T = 26, B = 110, max = 110;
+    const y = v => B - v / max * (B - T);
+    const bw = (R - L) / ORDERS.length;
+    svgEl('text', { x: 0, y: 12, 'font-size': 13, 'font-weight': 600, fill: '#F2F3F5', 'font-family': 'Poppins, sans-serif' }, chart, 'Ordini al giorno');
+    [0, 50, 100].forEach(v => { svgEl('line', { x1: L, x2: R, y1: y(v), y2: y(v), stroke: 'rgba(255,255,255,.06)' }, chart);  });
+    ORDERS.forEach((v, i) => {
+      const x = L + i * bw + bw * .24, w = bw * .52;
+      const r = svgEl('rect', { x, y: y(v), width: w, height: B - y(v), rx: 5, fill: v >= 85 ? '#22D287' : '#3A3E46', class: 'gkbar' }, chart);
+      r.style.transformBox = 'fill-box'; r.style.transformOrigin = 'bottom'; r.style.transition = `transform .8s cubic-bezier(.16,1,.3,1) ${i * .35}s`;
+      svgEl('text', { x: x + w / 2, y: B + 16, 'text-anchor': 'middle', 'font-size': 10, fill: '#8C8F99', 'font-family': 'Inter, sans-serif' }, chart, 'M' + (i + 1));
+    });
+    svgEl('line', { x1: L, x2: R, y1: y(85), y2: y(85), stroke: '#3CBDD2', 'stroke-dasharray': '4 4', 'stroke-width': 1.2 }, chart);
+    svgEl('text', { x: R, y: y(85) - 6, 'text-anchor': 'end', 'font-size': 10, 'font-weight': 600, fill: '#3CBDD2', 'font-family': 'Inter, sans-serif' }, chart, 'pareggio');
+  })();
+  scenes[2] = vis => {
+    const bars = $$('#gkchart .gkbar');
+    if (!reduce) {
+      bars.forEach(b => { b.style.transitionDuration = '0s'; b.style.transform = 'scaleY(0)'; });
+      void chart.getBoundingClientRect();
+      later(() => bars.forEach(b => { b.style.transitionDuration = ''; b.style.transform = 'scaleY(1)'; }), 300);
+    }
+    const fx = $('#gkfx'); fx.innerHTML = '';
+    const riders = [];
+    every(() => {
+      const a = Math.random() * Math.PI * 2, d = 25 + Math.pow(Math.random(), .7) * 110;
+      const tx = 150 + Math.cos(a) * d * 1.4, ty = 100 + Math.sin(a) * d * .75;
+      riders.push({ dot: svgEl('circle', { cx: 150, cy: 100, r: 3, fill: '#F2F3F5' }, fx), tx, ty, t0: performance.now(), dur: 1300 + Math.random() * 900 });
+    }, 260);
+    if (reduce) for (let i = 0; i < 40; i++) { const a = Math.random() * 6.28, d = 25 + Math.random() * 100; svgEl('circle', { cx: 150 + Math.cos(a) * d * 1.4, cy: 100 + Math.sin(a) * d * .75, r: 3, fill: '#22D287', opacity: .6 }, fx); }
+    frame(ts => {
+      for (let i = riders.length - 1; i >= 0; i--) {
+        const r = riders[i]; const p = Math.min(1, (ts - r.t0) / r.dur);
+        r.dot.setAttribute('cx', p < .5 ? 150 + (r.tx - 150) * (p / .5) : r.tx);
+        r.dot.setAttribute('cy', p < .5 ? 100 : 100 + (r.ty - 100) * ((p - .5) / .5));
+        if (p >= 1) {
+          r.dot.remove(); riders.splice(i, 1);
+          svgEl('circle', { cx: r.tx, cy: r.ty, r: 3, fill: '#22D287', opacity: .7 }, fx);
+          if (fx.childElementCount > 160) fx.firstElementChild.remove();
+        }
+      }
+    });
+    later(() => vis.closest('.scene').querySelectorAll('[data-count]').forEach(el => countTo(el, +el.dataset.count, 2600)), 400);
+  };
+
+  // 3 · Ristorante
+  scenes[3] = vis => {
+    const w = $('#walkers'); w.innerHTML = '';
+    every(() => {
+      if (w.childElementCount > 12) w.firstElementChild.remove();
+      const fromLeft = Math.random() < .5;
+      const p = svgEl('circle', { cx: fromLeft ? -10 : 410, cy: 254, r: 5, fill: Math.random() < .4 ? '#22D287' : '#F2F3F5' }, w);
+      p.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${fromLeft ? 297 : -123}px)`, opacity: 1, offset: .9 }, { transform: `translateX(${fromLeft ? 297 : -123}px)`, opacity: 0 }], { duration: 3200, easing: 'linear', fill: 'forwards' });
+    }, 520);
+    later(() => vis.closest('.scene').querySelectorAll('[data-count]').forEach(el => countTo(el, +el.dataset.count, 2200)), 900);
+  };
+
+  // 4 · Replica
+  const CITY = { Milano: [45.46, 9.19, 'd'], Torino: [45.07, 7.69, 'l'], Brescia: [45.54, 10.21, 'u'], Bologna: [44.49, 11.34, 'r'], Firenze: [43.77, 11.25, 'r'], Roma: [41.9, 12.5, 'r'], Napoli: [40.85, 14.27, 'l'] };
+  const P = (lat, lon) => [22 + (lon - 6.8) * 52, 34 + (47.2 - lat) * 58];
+  const net = $('#net'), nodes = {}, links = {};
+  (() => {
+    const [mx, my] = P(CITY.Milano[0], CITY.Milano[1]);
+    Object.keys(CITY).forEach(n => {
+      if (n === 'Milano') return;
+      const [x, y] = P(CITY[n][0], CITY[n][1]);
+      links[n] = svgEl('path', { d: `M${mx} ${my} Q ${(mx + x) / 2 + 30} ${(my + y) / 2 - 30} ${x} ${y}`, fill: 'none', stroke: '#22D287', 'stroke-width': 1.4, 'stroke-opacity': .5, pathLength: 1, class: 'lk' }, net);
+    });
+    Object.keys(CITY).forEach(n => {
+      const [lat, lon, side] = CITY[n]; const [x, y] = P(lat, lon);
+      const g = svgEl('g', { class: 'node' }, net);
+      const dot = svgEl('circle', { cx: x, cy: y, r: 7, fill: '#4A4E57', stroke: '#1B1D22', 'stroke-width': 2 }, g);
+      const dx = side === 'l' ? -14 : side === 'r' ? 14 : 0;
+      const anchor = side === 'l' ? 'end' : side === 'r' ? 'start' : 'middle';
+      let ty = y + 4; if (side === 'u') ty = y - 26; if (side === 'd') ty = y + 26;
+      svgEl('text', { x: x + dx, y: ty, 'text-anchor': anchor, 'font-size': 13, 'font-weight': 600, fill: '#F2F3F5', 'font-family': 'Inter, sans-serif' }, g, n);
+      const st = svgEl('text', { x: x + dx, y: ty + 15, 'text-anchor': anchor, 'font-size': 10.5, fill: '#A3A6AF', 'font-family': 'Inter, sans-serif' }, g, 'Early Access');
+      nodes[n] = { g, dot, st };
+    });
+    svgEl('text', { x: 20, y: 424, 'font-size': 11, fill: '#8C8F99', 'font-family': 'Inter, sans-serif' }, net, "Ordine delle città indicativo: lo decide la classifica Early Access.");
+  })();
+  const setNode = (n, kind) => {
+    const { g, dot, st } = nodes[n]; g.classList.add('on');
+    if (kind === 'store') { dot.setAttribute('fill', '#22D287'); dot.setAttribute('stroke', '#1B1D22'); dot.setAttribute('stroke-width', 2); }
+    if (kind === 'gk') { dot.setAttribute('fill', '#1B1D22'); dot.setAttribute('stroke', '#22D287'); dot.setAttribute('stroke-width', 3); }
+    st.textContent = kind === 'store' ? (n === 'Milano' ? '2 ristoranti' : 'Ristorante') : kind === 'gk' ? 'Ghost kitchen' : 'Early Access';
+  };
+  scenes[4] = () => {
+    Object.values(nodes).forEach(({ g, dot, st }) => { g.classList.remove('on'); dot.setAttribute('fill', '#4A4E57'); dot.setAttribute('stroke', '#1B1D22'); dot.setAttribute('stroke-width', 2); st.textContent = 'Early Access'; });
+    Object.values(links).forEach(l => l.classList.remove('on'));
+    setNode('Milano', 'store'); nodes.Milano.st.textContent = '1 ristorante';
+    later(() => { nodes.Milano.st.textContent = '2 ristoranti'; }, 1200);
+    [['Roma', 'gk', 2000], ['Roma', 'store', 5200], ['Torino', 'gk', 3000], ['Bologna', 'gk', 4100], ['Brescia', 'ea', 5600], ['Firenze', 'ea', 6000], ['Napoli', 'ea', 6400]]
+      .forEach(([n, k, t]) => later(() => { links[n].classList.add('on'); setNode(n, k); }, t));
+  };
+
+  // ---- Navigazione a mano ----
+  const seg = $('#seg'), pill = $('#pill');
+  PHASES.forEach((p, i) => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.textContent = `${i} · ${p.name}`;
+    b.addEventListener('click', () => go(i));
+    seg.appendChild(b);
+  });
+  const segBtns = $$('#seg button');
+  const placePill = () => { const b = segBtns[cur]; pill.style.width = b.offsetWidth + 'px'; pill.style.transform = `translateX(${b.offsetLeft - 4}px)`; };
+  let cur = 0;
+  function go(i) {
+    cur = Math.max(0, Math.min(PHASES.length - 1, i));
+    clearAll();
+    $$('.scene').forEach(s => s.classList.toggle('on', +s.dataset.scene === cur));
+    $$('[data-gate]').forEach(g => g.classList.remove('show'));
+    segBtns.forEach((b, k) => k === cur ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current'));
+    placePill();
+    const sc = $(`.scene[data-scene="${cur}"]`);
+    sc.querySelectorAll('[data-count]').forEach(el => { el.textContent = reduce ? fmt(+el.dataset.count) : '0'; });
+    scenes[cur](sc.querySelector('.vis'));
+    const gate = sc.querySelector('[data-gate]');
+    if (gate) later(() => gate.classList.add('show'), 6500);
+    $('#prev').disabled = cur === 0;
+    $('#next').disabled = cur === PHASES.length - 1;
+  }
+  $('#prev').addEventListener('click', () => go(cur - 1));
+  $('#next').addEventListener('click', () => go(cur + 1));
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input, textarea')) return;
+    if (e.key === 'ArrowRight') go(cur + 1);
+    else if (e.key === 'ArrowLeft') go(cur - 1);
+  });
+  window.addEventListener('resize', placePill);
+  const m = /^#fase-([0-4])$/.exec(location.hash);
+  go(m ? +m[1] : 0);
+  if (document.fonts) document.fonts.ready.then(placePill);
+})();
+</script>
+
+</body>
+</html>
